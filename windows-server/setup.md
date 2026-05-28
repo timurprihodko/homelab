@@ -10,9 +10,9 @@
 
 ## Goals
 
-- [ ] Windows Server installation
-- [ ] Active Directory Domain Services (AD DS)
-- [ ] DNS
+- [X] Windows Server installation
+- [X] Active Directory Domain Services (AD DS)
+- [X] DNS
 - [ ] DHCP
 - [ ] GPO
 - [ ] Domain join — Ubuntu
