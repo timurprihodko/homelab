@@ -20,3 +20,13 @@ Created VM in VMware with the above parameters.
 OpenSSH Server enabled during installation.
 
 Server IP address: `192.168.0.61`
+
+## 2. SSH Key-Based Authentication
+*28.05.2026*
+
+Installed OpenSSH Server on the VM.
+Generated Ed25519 key pair on Windows host.
+Copied public key to server (~/.ssh/authorized_keys).
+Disabled password authentication in /etc/ssh/sshd_config.
+
+Result: Passwordless SSH login from Windows host confirmed.
