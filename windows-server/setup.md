@@ -32,13 +32,15 @@ Server IP: 10.0.2.15 (NAT, college)
 
 ### 2. Active Directory Domain Services
 
-*_.05.2026*
+*28.05.2026*
 
-Installed AD DS role via Server Manager. Promoted server to Domain Controller.
+Installed AD DS role via PowerShell. Promoted server to Domain Controller.
 
 - Domain name: `homelab.local`
-- Forest/Domain functional level: Windows Server 2016
-- DNS role installed automatically during promotion.
+- NetBIOS name: `HOMELAB`
+- Forest/Domain functional level: Windows Server 2016 (WinThreshold)
+- DNS installed on DC
+- DC hostname: `DC01.homelab.local`
 
 Result: DC promoted, server rebooted, domain `homelab.local` active.
 
