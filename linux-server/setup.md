@@ -8,7 +8,7 @@
 - Network: Bridged
 
 ## Goals
-- [ ] SSH key-based authentication
+- [X] SSH key-based authentication
 - [ ] Web server (Nginx)
 - [ ] File server (Samba/NFS) with access control
 
