@@ -13,7 +13,7 @@
 - [X] Windows Server installation
 - [X] Active Directory Domain Services (AD DS)
 - [X] DNS
-- [Х] DHCP
+- [X] DHCP
 - [ ] GPO
 - [ ] Domain join — Ubuntu
 
