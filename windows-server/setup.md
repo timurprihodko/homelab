@@ -14,7 +14,7 @@
 - [X] Active Directory Domain Services (AD DS)
 - [X] DNS
 - [X] DHCP
-- [ ] GPO
+- [X] GPO
 - [ ] Domain join — Ubuntu
 
 ---
@@ -64,18 +64,29 @@ Authorized DHCP server in AD.
 Result: scope active, clients will receive addresses from scope.
 
 ### 4. GPO — Basic Policies
+*30.05.2026*
 
-*_.05.2026*
-
-Created GPOs via Group Policy Management Console (GPMC):
+Created OU=Clients for workstation policy scope.
+Configured policies via PowerShell (Server Core, no GPMC GUI).
 
 | GPO | Scope | Setting |
 |-----|-------|---------|
-| Password Policy | Default Domain Policy | Min length: 10, complexity: enabled |
+| Password Policy | Default Domain Policy | Min length: 10, complexity: enabled, max age: 42d |
 | Desktop Restrictions | OU=Clients | Disable Control Panel |
-| Drive Map | OU=Clients | Map \\server\share as Z: |
+| Drive Map | OU=Clients | Map \\DC01\share as Z: |
 
-Result: policies applied, verified via `gpresult /r` on client.
+Password Policy applied via `Set-ADDefaultDomainPasswordPolicy`.
+Desktop Restrictions and Drive Map created via `New-GPO` + `New-GPLink`.
+
+Drive Map configured via Group Policy Preferences (XML in SYSVOL).
+No GUI available on Server Core — Drives.xml written manually
+line by line using `Set-Content` / `Add-Content` directly into:
+`SYSVOL\homelab.local\Policies\{GPO-GUID}\User\Preferences\Drives\`
+
+Shared folder: `C:\share` → `\\DC01\share` (Domain Users: Full Access)
+
+Result: GPOs created and linked to OU=Clients. 
+Verification pending — requires domain-joined client.
 
 ### 5. Domain Join — Windows 10/11 Client
 
