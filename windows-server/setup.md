@@ -45,19 +45,23 @@ Installed AD DS role via PowerShell. Promoted server to Domain Controller.
 Result: DC promoted, server rebooted, domain `homelab.local` active.
 
 ### 3. DHCP Server
-
-*_.05.2026*
+*30.05.2026*
 
 Installed DHCP Server role. Created scope:
-
 - Range: `192.168.0.100 – 192.168.0.200`
 - Subnet mask: `255.255.255.0`
 - Default gateway: `192.168.0.1`
-- DNS: `192.168.0.x` (DC)
+- DNS: `192.168.0.10` (DC)
+- DNS Domain: `homelab.local`
+- Lease duration: 8 days
 
 Authorized DHCP server in AD.
 
-Result: clients receive addresses from scope.
+**Issue:** `Add-DhcpServerInDC` failed with `WIN32 5 / Access Denied`.
+**Root cause:** user `admin` was not in `Domain Admins`. Fixed via
+`Add-ADGroupMember`. Full logoff required for Kerberos token refresh.
+
+Result: scope active, clients will receive addresses from scope.
 
 ### 4. GPO — Basic Policies
 
