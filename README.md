@@ -12,6 +12,10 @@ Built on VirtualBox VMs, documented step-by-step.
 | Hypervisor | VirtualBox |
 | Network | NAT (college) / Bridged (home) |
 
+## Network Topology
+
+![Network topology](topology.svg)
+
 ### Virtual Machines
 
 | VM | OS | RAM | Disk | Role |
