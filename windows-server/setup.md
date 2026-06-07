@@ -15,7 +15,7 @@
 - [X] DNS
 - [X] DHCP
 - [X] GPO
-- [ ] Domain join — Ubuntu
+- [X] Domain join — Ubuntu
 
 ---
 
@@ -88,11 +88,13 @@ Shared folder: `C:\share` → `\\DC01\share` (Domain Users: Full Access)
 Result: GPOs created and linked to OU=Clients. 
 Verification pending — requires domain-joined client.
 
-### 5. Domain Join — Windows 10/11 Client
+### 5. Domain Join — Ubuntu
+*07.06.2026*
 
-*_.05.2026*
+Added PTR record to DC01 DNS for reverse lookup:
+- Zone: `0.168.192.in-addr.arpa`
+- Record: `10` → `DC01.homelab.local`
 
-Client machine: `192.168.0.x` (DHCP).
-Joined domain `homelab.local` via Settings → System → Domain.
+Created computer account in AD: `CN=LINUX-SERVER,CN=Computers,DC=homelab,DC=local`
 
-Result: login with domain credentials confirmed. GPO applied.
+Result: `linux-server` joined to `homelab.local` confirmed from both sides.
