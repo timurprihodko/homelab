@@ -21,7 +21,7 @@ Built on VirtualBox VMs, documented step-by-step.
 | VM | OS | RAM | Disk | Role |
 |----|----|-----|------|------|
 | DC01 | Windows Server 2019 (Server Core) | 4 GB | 50 GB | Domain Controller |
-| linux-srv | Ubuntu Server 24.04 LTS | 2 GB | 20 GB | Linux server |
+| linux-srv | Ubuntu Server 22.04 LTS | 2 GB | 20 GB | Linux server |
 
 ---
 
@@ -36,16 +36,18 @@ Built on VirtualBox VMs, documented step-by-step.
 | DNS | ✅ Done |
 | DHCP | ✅ Done |
 | Group Policy Objects (GPO) | ✅ Done |
-| Domain join — Ubuntu | 🔄 In progress |
+| Domain join — Ubuntu | ✅ Done |
 | Shared folders with access control | 🔄 In progress |
 
 ### Linux Server
 
 | Task | Status |
 |------|--------|
-| Ubuntu Server 24.04 LTS installation | ✅ Done |
+| Ubuntu Server 22.04 LTS installation | ✅ Done |
 | SSH key-based authentication | ✅ Done |
-| Domain join (homelab.local) | 🔄 In progress |
+| Domain join (homelab.local) | ✅ Done |
+| Web server (Nginx) | 🔄 Planned |
+| File server (Samba/NFS) | 🔄 Planned |
 
 ---
 
@@ -98,16 +100,26 @@ Full logoff required for Kerberos token refresh.
 
 ---
 
+### Domain Join Ubuntu — GSSAPI Failure
+**Problem:** `realm join` failed with `GSSAPI Error: Unspecified GSS failure`  
+**Root cause:** Multiple issues in sequence:
+
+| Step | Error | Fix |
+|------|-------|-----|
+| 1 | `Cannot contact any KDC` | `apt install krb5-user` |
+| 2 | `Server not found in Kerberos database` | Added PTR record on DC01 for `192.168.0.10` |
+| 3 | `GSSAPI: Unspecified GSS failure` | Disabled IPv6 via `sysctl` |
+| 4 | Netplan not applying | `chmod 600 /etc/netplan/01-homelab.yaml` |
+
 ## Technologies Used
 
 `Windows Server 2019` `Active Directory` `DNS` `DHCP` `GPO` `PowerShell`  
-`Ubuntu Server 24.04` `OpenSSH` `VirtualBox` `Networking`
+`Ubuntu Server 22.04` `OpenSSH` `realmd` `sssd` `Kerberos` `VirtualBox`
 
 ---
 
 ## Planned (Phase 2)
 
-- Ubuntu domain join (`homelab.local`)
 - Shared folders with AD-based access control
 - pfSense/OPNsense — VLAN, NAT, Firewall
 - Monitoring: Zabbix or Grafana + Prometheus
