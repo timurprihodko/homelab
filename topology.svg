@@ -41,8 +41,9 @@
   <!-- linux-srv -->
   <rect x="360" y="240" width="220" height="140" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
   <text x="470" y="262" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="500" fill="#085041">linux-srv</text>
-  <text x="470" y="282" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Ubuntu 24.04 LTS</text>
-  <text x="470" y="300" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">DHCP: 192.168.0.100–200</text>
+  <text x="470" y="282" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Ubuntu 22.04 LTS</text>
+  <text x="470" y="300" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">DHCP: 192.168.0.100</text>
   <text x="470" y="318" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">SSH Ed25519</text>
-  <text x="470" y="338" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Domain join: in progress</text>
+  <text x="470" y="338" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Domain member</text>
+  <text x="470" y="358" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">homelab.local</text>
 </svg>
