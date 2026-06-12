@@ -19,7 +19,7 @@ Downloaded Ubuntu Server 22.04 LTS ISO.
 Created VM in VMware with the above parameters.
 OpenSSH Server enabled during installation.
 
-Server IP address: `192.168.0.61`
+Server IP address: `192.168.0.100`
 
 ## 2. SSH Key-Based Authentication
 *28.05.2026*
