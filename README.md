@@ -25,6 +25,9 @@ Built on VirtualBox VMs, documented step-by-step.
 
 ---
 
+> Note: the Linux VM's actual hostname is `linux-server`; `linux-srv` is
+> used as a short label in this README and the topology diagram.
+
 ## Progress
 
 ### Windows Server
@@ -37,7 +40,7 @@ Built on VirtualBox VMs, documented step-by-step.
 | DHCP | ✅ Done |
 | Group Policy Objects (GPO) | ✅ Done |
 | Domain join — Ubuntu | ✅ Done |
-| Shared folders with access control | 🔄 In progress |
+| Shared folders with access control | ✅ Done |
 
 ### Linux Server
 
@@ -68,6 +71,7 @@ Built on VirtualBox VMs, documented step-by-step.
 - **Default gateway:** `192.168.0.1`
 - **DNS:** `192.168.0.10` (DC)
 - **Lease duration:** 8 days
+- **DNS forwarders:** `8.8.8.8`, `1.1.1.1` (external resolution for domain clients)
 
 ### Group Policy Objects
 
@@ -77,6 +81,13 @@ Built on VirtualBox VMs, documented step-by-step.
 | Desktop Restrictions | OU=Clients | Disable Control Panel |
 | Drive Map | OU=Clients | Map `\\DC01\share` as `Z:` |
 
+### Shared Folders (AD-based Access Control)
+- Structure: `OU=Departments` → Global Security groups HR, IT, Finance
+- Folders: `C:\Shares\{HR,IT,Finance}` on DC01
+- NTFS ACL: department group → Modify; SYSTEM, Domain Admins → Full; inheritance disabled
+- SMB share permission `Everyone: Full` — real restriction via NTFS ACL
+- Verified from Ubuntu (`smbclient`): HR member granted on HR share, denied on Finance
+  
 ### SSH (Ubuntu Server)
 
 - Key type: **Ed25519**
@@ -120,7 +131,6 @@ Full logoff required for Kerberos token refresh.
 
 ## Planned (Phase 2)
 
-- Shared folders with AD-based access control
 - pfSense/OPNsense — VLAN, NAT, Firewall
 - Monitoring: Zabbix or Grafana + Prometheus
 - Network topology diagram (Draw.io)
