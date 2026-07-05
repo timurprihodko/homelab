@@ -16,6 +16,7 @@
 - [X] DHCP
 - [X] GPO
 - [X] Domain join — Ubuntu
+- [X] Shared folders with AD-based access control
 
 ---
 
@@ -98,3 +99,51 @@ Added PTR record to DC01 DNS for reverse lookup:
 Created computer account in AD: `CN=LINUX-SERVER,CN=Computers,DC=homelab,DC=local`
 
 Result: `linux-server` joined to `homelab.local` confirmed from both sides.
+
+### 6. DNS Forwarder
+*05.07.2026*
+Added external DNS forwarders on DC01 so domain clients resolve public
+names (previously only `homelab.local` resolved; external lookups failed).
+- Forwarders: `8.8.8.8`, `1.1.1.1`
+Configured via `Set-DnsServerForwarder`. Verified with `Get-DnsServerForwarder`.
+Result: internal and external name resolution working from domain members.
+
+### 7. Shared Folders with AD-Based Access Control
+*05.07.2026*
+Replaced the earlier flat share (`\\DC01\share`, Domain Users: Full) with
+per-department shares isolated by AD security groups.
+
+**AD structure:**
+Created `OU=Departments`. Added three Global Security groups: HR, IT, Finance.
+```powershell
+New-ADOrganizationalUnit -Name "Departments" -Path "DC=homelab,DC=local"
+# HR / IT / Finance
+New-ADGroup -Name "HR" -GroupScope Global -GroupCategory Security -Path "OU=Departments,DC=homelab,DC=local"
+```
+
+**Folders:** `C:\Shares\{HR,IT,Finance}`.
+
+**NTFS ACL:** inheritance removed, department group granted Modify,
+admin access preserved. Applied via `icacls` (PowerShell
+`FileSystemAccessRule` constructor failed to parse enum flags on Server Core):
+```cmd
+icacls C:\Shares\HR /inheritance:r /grant "HOMELAB\Domain Admins:(OI)(CI)F" "SYSTEM:(OI)(CI)F" "HOMELAB\HR:(OI)(CI)M"
+```
+Resulting ACL per folder — 3 ACEs: department group (Modify),
+SYSTEM (Full), Domain Admins (Full).
+
+**SMB shares:** created for each folder.
+```powershell
+New-SmbShare -Name "HR" -Path "C:\Shares\HR" -FullAccess "Everyone"
+```
+Share permission `Everyone: Full` — access restricted by NTFS ACL
+(effective access = the more restrictive of share and NTFS).
+
+**Test user:** `hr.test` created, added to HR group.
+
+Result: per-department shares active, access enforced by AD group
+membership. Old `\\DC01\share` removed via `Remove-SmbShare`.
+
+**Note — GPO Drive Map:** the Drive Map GPO (section 4) still maps the
+removed `\\DC01\share` as `Z:`. Requires update to point at a valid
+share (e.g. per-department mapping filtered by group). Pending.
