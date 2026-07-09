@@ -20,7 +20,7 @@ Built on VirtualBox VMs, documented step-by-step.
 
 | VM | OS | RAM | Disk | Role |
 |----|----|-----|------|------|
-| DC01 | Windows Server 2019 (Server Core) | 4 GB | 50 GB | Domain Controller |
+| DC01 | Windows Server 2019 (Server Core) | 6 GB | 50 GB | Domain Controller |
 | linux-srv | Ubuntu Server 22.04 LTS | 2 GB | 20 GB | Linux server |
 
 ---
@@ -49,6 +49,7 @@ Built on VirtualBox VMs, documented step-by-step.
 | Ubuntu Server 22.04 LTS installation | ✅ Done |
 | SSH key-based authentication | ✅ Done |
 | Domain join (homelab.local) | ✅ Done |
+| Static IP configuration | 🔄 In progress |
 | Web server (Nginx) | 🔄 Planned |
 | File server (Samba/NFS) | 🔄 Planned |
 
@@ -63,6 +64,7 @@ Built on VirtualBox VMs, documented step-by-step.
 - **DC hostname:** `DC01.homelab.local`
 - **Functional level:** Windows Server 2016
 - Configured entirely via **PowerShell** (Server Core — no GUI)
+- **DNS forwarders:** `8.8.8.8`, `1.1.1.1` (external resolution for domain clients)
 
 ### DHCP Scope
 
@@ -71,7 +73,6 @@ Built on VirtualBox VMs, documented step-by-step.
 - **Default gateway:** `192.168.0.1`
 - **DNS:** `192.168.0.10` (DC)
 - **Lease duration:** 8 days
-- **DNS forwarders:** `8.8.8.8`, `1.1.1.1` (external resolution for domain clients)
 
 ### Group Policy Objects
 
@@ -121,6 +122,14 @@ Full logoff required for Kerberos token refresh.
 | 2 | `Server not found in Kerberos database` | Added PTR record on DC01 for `192.168.0.10` |
 | 3 | `GSSAPI: Unspecified GSS failure` | Disabled IPv6 via `sysctl` |
 | 4 | Netplan not applying | `chmod 600 /etc/netplan/01-homelab.yaml` |
+
+---
+
+### Two DHCP Servers on the Bridged Network
+
+**Problem:** DHCP reservation on DC01 ignored; Ubuntu's IP changed between reboots  
+**Root cause:** the home router (`192.168.0.1`) runs a DHCP server whose pool overlaps the DC01 scope. Both answer; the router wins.  
+**Fix:** static IP on the Ubuntu VM, outside both pools. DC01 stays the authorised DHCP server for the lab.
 
 ## Technologies Used
 
