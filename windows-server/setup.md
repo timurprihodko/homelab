@@ -3,7 +3,7 @@
 ## Environment
 
 - OS: Windows Server 2019 (Evaluation, Server Core)
-- RAM: 4096 MB
+- RAM: 6144 MB
 - Disk: 50 GB
 - Hypervisor: VirtualBox
 - Network: NAT (college) / Bridged (home)
@@ -145,5 +145,36 @@ Result: per-department shares active, access enforced by AD group
 membership. Old `\\DC01\share` removed via `Remove-SmbShare`.
 
 **Note — GPO Drive Map:** the Drive Map GPO (section 4) still maps the
+
+### 8. DHCP Reservation for linux-server
+*09.07.2026*
+
+Created a DHCP reservation on DC01 to pin `192.168.0.100` to the Ubuntu VM.
+```powershell
+Add-DhcpServerv4Reservation -ScopeId 192.168.0.0 -IPAddress 192.168.0.100 `
+  -ClientId "08-00-27-84-EF-D8" -Name "linux-server"
+```
+Verified via `Get-DhcpServerv4Reservation`.
+
+**Issue:** the reservation never took effect. `journalctl` on the Ubuntu VM
+showed leases arriving `via 192.168.0.1` — the home router, not DC01.
+
+**Root cause:** a second DHCP server (the home router) is active on the
+bridged network. Both answer; the router wins the race. Its pool also
+overlaps the DC01 scope (`.100–.200`), so IP conflicts are possible.
+
+**Resolution:** DC01 remains the authorised DHCP server for the lab, but in
+this bridged home network it cannot be the only one. Ubuntu was moved to a
+static address instead (see Linux log §5). Reservation kept as an artefact.
+
+### 9. Password Policy — First Real Verification
+*09.07.2026*
+
+Logging in to DC01 triggered a forced password change for `HOMELAB\admin`.
+Cause: `max age: 42d` from the Password Policy set in §4 — the domain was
+created 28.05.2026, so the password had expired.
+
+Result: Password Policy confirmed working in practice. Previously only
+configured, never observed enforcing.
 removed `\\DC01\share` as `Z:`. Requires update to point at a valid
 share (e.g. per-department mapping filtered by group). Pending.
