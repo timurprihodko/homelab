@@ -21,9 +21,8 @@ OpenSSH Server enabled during installation.
 
 Server IP address: `192.168.0.100`
 
-Note: `192.168.0.100` falls inside the DHCP scope. For a server holding
-shares and accessed over fixed SSH, a static address or DHCP reservation
-is preferable to avoid the lease changing. To revisit.
+Note: `192.168.0.100` falls inside the DHCP scope. Later replaced with a
+static address — see §5.
 
 ## 2. SSH Key-Based Authentication
 *28.05.2026*
@@ -60,6 +59,45 @@ smbclient //192.168.0.10/Finance -U 'HOMELAB\hr.test' # NT_STATUS_ACCESS_DENIED
 ```
 Result: `hr.test` (member of HR) could list `\\DC01\HR` but was denied on
 `\\DC01\Finance`. AD group-based access control confirmed working.
+
+## 5. Static IP Configuration
+*09.07.2026*
+
+**Problem:** the DHCP reservation on DC01 (Windows log §8) had no effect —
+Ubuntu kept receiving addresses from the home router (`192.168.0.1`), which
+runs its own DHCP server on the bridged network. The address drifted between
+reboots (`.61`, `.101`), breaking SSH on a fixed IP.
+
+**Fix:** switched `enp0s3` to a static address outside both DHCP pools.
+
+`/etc/netplan/01-homelab.yaml`:
+```yaml
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: false
+      addresses: [192.168.0.20/24]
+      routes:
+        - to: default
+          via: 192.168.0.1
+      nameservers:
+        addresses: [192.168.0.10]
+        search: [homelab.local]
+```
+Also moved `50-cloud-init.yaml` aside — netplan merges every `.yaml` in
+`/etc/netplan/` alphabetically, and cloud-init's file re-enabled DHCP.
+
+**Status: in progress.** `netplan get` reflects the static config, but the
+old DHCP lease (`192.168.0.61`) persists on the interface alongside `.20`,
+and `resolvectl` still prefers the router as DNS. Something outside netplan
+is renewing the lease. To investigate: running `dhclient` processes,
+cloud-init network management, drop-ins under `/etc/systemd/network/`.
+
+### Side notes
+- IPv6 is active again (`DHCPv6` in `journalctl`). The `sysctl -w
+  net.ipv6.conf.all.disable_ipv6=1` from §3 was runtime-only and did not
+  survive reboot — needs `/etc/sysctl.conf` to persist.
 
 ### Troubleshooting
 
