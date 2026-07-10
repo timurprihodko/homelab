@@ -10,7 +10,7 @@ Built on VirtualBox VMs, documented step-by-step.
 | Component | Details |
 |-----------|---------|
 | Hypervisor | VirtualBox |
-| Network | NAT (college) / Bridged (home) |
+| Network | Bridged (home) |
 
 ## Network Topology
 
