@@ -29,7 +29,7 @@
 Downloaded Windows Server 2019 Evaluation ISO. Created VM in VirtualBox.
 Server Core (no GUI). Hostname: DC01.
 
-Server IP: 10.0.2.15 (NAT, college)
+Server IP: 192.168.0.10
 
 ### 2. Active Directory Domain Services
 
