@@ -6,7 +6,7 @@
 - RAM: 6144 MB
 - Disk: 50 GB
 - Hypervisor: VirtualBox
-- Network: NAT (college) / Bridged (home)
+- Network: Bridged (home)
 
 ## Goals
 
